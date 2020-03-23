@@ -9,7 +9,20 @@
         let root = document.querySelector('[x-data]')
         let rawData = getInitialData()
         let data = observe(rawData)
+        registerListeners()
         refreshDom()
+
+        function registerListeners() {
+            walkDom(root, el => {
+                if (el.hasAttribute('@click')) {
+                    let expression = el.getAttribute('@click')
+
+                    el.addEventListener('click', () => {
+                        eval(`with (data) { (${expression}) }`)
+                    })
+                }
+            })
+        }
 
         function observe(data) {
             return new Proxy(data, {
