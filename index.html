@@ -7,8 +7,19 @@
 
     <script>
         let root = document.querySelector('[x-data]')
-        let data = getInitialData()
+        let rawData = getInitialData()
+        let data = observe(rawData)
         refreshDom()
+
+        function observe(data) {
+            return new Proxy(data, {
+                set(target, key, value) {
+                    target[key] = value
+
+                    refreshDom()
+                }
+            })
+        }
 
         function refreshDom() {
             walkDom(root, el => {
