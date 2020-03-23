@@ -1,63 +1,10 @@
 <html>
     <div x-data="{ count: 0 }">
-        <button @click="count++">+</button>
+        <button @mouseenter="count++">+</button>
         <button @click="count--">-</button>
         <span x-text="count"></span>
+        <span x-show="count > 2">I'm over 2</span>
     </div>
 
-    <script>
-        let root = document.querySelector('[x-data]')
-        let rawData = getInitialData()
-        let data = observe(rawData)
-        registerListeners()
-        refreshDom()
-
-        function registerListeners() {
-            walkDom(root, el => {
-                if (el.hasAttribute('@click')) {
-                    let expression = el.getAttribute('@click')
-
-                    el.addEventListener('click', () => {
-                        eval(`with (data) { (${expression}) }`)
-                    })
-                }
-            })
-        }
-
-        function observe(data) {
-            return new Proxy(data, {
-                set(target, key, value) {
-                    target[key] = value
-
-                    refreshDom()
-                }
-            })
-        }
-
-        function refreshDom() {
-            walkDom(root, el => {
-                if (el.hasAttribute('x-text')) {
-                    let expression = el.getAttribute('x-text')
-                    el.innerText = eval(`with (data) { (${expression}) }`)
-                }
-            })
-        }
-
-        function walkDom(el, callback) {
-            callback(el)
-
-            el = el.firstElementChild
-
-            while (el) {
-                walkDom(el, callback)
-
-                el = el.nextElementSibling
-            }
-        }
-
-        function getInitialData() {
-            let dataString = root.getAttribute('x-data')
-            return eval(`(${dataString})`)
-        }
-    </script>
+    <script src="/alpine.js"></script>
 </html>
