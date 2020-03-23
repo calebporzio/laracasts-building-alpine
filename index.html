@@ -2,71 +2,16 @@
     <div x-data="{ count: 0 }">
         <button @click="count++">+</button>
         <button @click="count--">-</button>
-
         <span x-text="count"></span>
-        <span x-show="count > 2">greater than two</span>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.js"></script>
-
-    <!-- <script>
-        let directives = {
-            'x-text': (el, value) => {
-                el.innerText = value
-            },
-            'x-show': (el, value) => {
-                el.style.display = value ? 'block' : 'none'
-            }
-        }
+    <script>
         let root = document.querySelector('[x-data]')
-        let rawData = evaluateExpression(root.getAttribute('x-data'))
-        let data = observe(rawData)
+        let data = getInitialData()
 
-        refresh()
-
-        registerListeners()
-
-        function observe(data) {
-            return new Proxy(data, { set(target, key, value) { target[key] = value; refresh() } })
+        function getInitialData() {
+            let dataString = root.getAttribute('x-data')
+            return eval(`(${dataString})`)
         }
-
-        function evaluateExpression(expression, data = {}) {
-            return eval('with(data) { ('+expression+') }')
-        }
-
-        function registerListeners() {
-            walk(root, el => {
-                Array.from(el.attributes).forEach(({name, value}) => {
-                    if (! name.startsWith('@')) return
-
-                    let event = name.slice(1)
-
-                    el.addEventListener(event, () => {
-                        evaluateExpression(value, data)
-                    })
-                })
-
-            })
-        }
-
-        function refresh() {
-            walk(root, (el) => {
-                Object.keys(directives).forEach(directive => {
-                    if (el.hasAttribute(directive)) {
-                        let value = evaluateExpression(el.getAttribute(directive), data)
-                        directives[directive](el, value)
-                    }
-                })
-            })
-        }
-
-        function walk(el, callback) {
-            callback(el)
-            let node = el.firstElementChild
-            while (node) {
-                walk(node, callback)
-                node = node.nextElementSibling
-            }
-        }
-    </script> -->
+    </script>
 </html>
